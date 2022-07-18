@@ -24,7 +24,7 @@
    <item row="0" column="3">
     <widget class="QLineEdit" name="nameEdit">
      <property name="text">
-      <string>639pttn_100y</string>
+      <string>100y</string>
      </property>
     </widget>
    </item>
