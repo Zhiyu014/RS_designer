@@ -14,12 +14,8 @@ from pandas import concat
 from shapely.geometry import Point,MultiPoint,LineString,Polygon
 from shapely.ops import split,nearest_points,unary_union
 from scipy.spatial import Voronoi
-from scipy.special import comb
-from itertools import combinations
 import math
 from numpy import piecewise
-import random
-import json
 # from SWMM_writer2 import main as write_inp
 
 
@@ -323,7 +319,6 @@ def find_node(nodes,subcatch):
     subcatch = gpd.sjoin(subcatch,nodes,how='left').drop_duplicates(['id'],keep='first')
     na_polys = subcatch[subcatch['name'].isna()]
     
-    # TODO join polys with nodes
     for ind,poly in zip(na_polys.index,na_polys['geometry']):
         dist = 100
         candis = nodes[nodes.intersects(poly.buffer(dist))][nodes['node_type']=='node']

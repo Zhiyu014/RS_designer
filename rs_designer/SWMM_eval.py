@@ -9,6 +9,7 @@ from swmm_api import swmm5_run,read_inp_file,read_rpt_file
 import geopandas as gpd
 from datetime import timedelta,datetime
 from numpy import nan
+import os.path
 # from pyswmm import Simulation
 
 def eval_pipes(pipe_file,diam):
@@ -22,7 +23,7 @@ def get_inp(inp_file):
     inp = read_inp_file(inp_file)
     return inp
 
-def simulate(inp,file,rain_ts,kind,runoff_co,field):
+def get_simulate_file(inp,inp_file,rain_ts,kind,runoff_co,field):
     inp['RAINGAGES']['RG'].Timeseries = rain_ts
     inp['RAINGAGES']['RG'].Format = kind
     
@@ -46,16 +47,13 @@ def simulate(inp,file,rain_ts,kind,runoff_co,field):
     for k,v in inp['SUBCATCHMENTS'].items():
         v.Imperv = runoff_co*100
 
-    
+    file = os.path.splitext(inp_file)[0] + '_' + rain_ts +'.inp'
     inp.write_file(file)
-    rpt_file,_ = swmm5_run(file,init_print=True,create_out=False)
-    # TODO show the processing bar with percentage
-    # with Simulation(file) as sim:
-    #     for ind in sim:
-    #         print(str(sim.percent_complete*100) + ' %')
-    #         pass
-    
-    
+    return file
+
+    # rpt_file,_ = swmm5_run(file,init_print=True,create_out=False)
+
+def eval_rpt(rpt_file,inp):
     rpt = read_rpt_file(rpt_file)
     lf = rpt.link_flow_summary
     nf = rpt.node_flooding_summary
@@ -76,6 +74,7 @@ def simulate(inp,file,rain_ts,kind,runoff_co,field):
     res = gpd.pd.DataFrame(columns=['满载管道长度占比/%','内涝节点占比/%',
                                     '积水深度超过15 cm节点占比/%','平均积水时间/hr',
                                     '最大积水时间/hr'])
-    res.loc[rain_ts]=[full_length_perc,flood_perc,flood_high_perc,
+    ts = os.path.split(rpt_file)[-1].split('_')[-1].split('.')[0]
+    res.loc[ts]=[full_length_perc,flood_perc,flood_high_perc,
                       flood_dura_avg,flood_dura_max]
     return res

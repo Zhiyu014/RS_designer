@@ -31,7 +31,7 @@ TODO Problems
 
 '''
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication,pyqtSignal,QObject
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction,QFileDialog,QTableWidgetItem
 from qgis.core import Qgis,QgsProject,QgsVectorLayer
@@ -50,15 +50,25 @@ from .rs_subcatch_dialog import RSSubcatchDialog
 from .rs_river_dialog import RSRiverDialog
 from .rs_simulate_dialog import RSSimulateDialog
 from .rs_rain_dialog import RSRainDialog
+from .rs_process_dialog import RSProcessDialog
 
 import os.path
 import geopandas as gpd
+from pyswmm import Simulation
+from threading import Thread
 
 from .RS_toolkit import read_resample,create_subcatch,update_area,create_out,DEMGenerate,\
     formulate,break_pipes,break_cycle,export_net,configurate,update_graph,merge_outfall_area,\
     get_elevation,export_hydraulic_table,check_field,read_pipes,find_node
 from .SWMM_writer2 import create_model,Chicago_Hyetographs,insert_rainfall
-from .SWMM_eval import simulate,get_inp
+from .SWMM_eval import get_simulate_file,get_inp,eval_rpt
+
+
+class SignalStore(QObject):
+    progress_update1 = pyqtSignal(int)
+    progress_update2 = pyqtSignal(int)
+so = SignalStore()
+
 
 class RSDesigner:
     """QGIS Plugin Implementation."""
@@ -735,37 +745,13 @@ class RSDesigner:
             self.dlg,"Select output path")
         self.dlg.outdirEdit.setText(filedir)        
         
-    # def output(self):
-    #     filename, _filter = QFileDialog.getSaveFileName(
-    #         self.dlg,"Select output file","","*.shp")
-    #     self.dlg.outdirEdit.setText(filename)
-        
-    # def output2(self):
-    #     filename, _filter = QFileDialog.getSaveFileName(
-    #         self.dlg,"Select output file","","*.shp")
-    #     self.dlg.outdirEdit2.setText(filename)
-                
-    # def output3(self):
-    #     filename, _filter = QFileDialog.getSaveFileName(
-    #         self.dlg,"Select output file","","*.xlsx")
-    #     self.dlg.outdirEdit3.setText(filename)        
-              
-        
-    # def output_inp(self):
-    #     filename, _filter = QFileDialog.getSaveFileName(
-    #         self.dlg,"Select output file","","*.inp")
-    #     self.dlg.outdirEdit4.setText(filename)
-        
-    # def output_dem(self):
-    #     filename, _filter = QFileDialog.getSaveFileName(
-    #         self.dlg,"Select output file","","*.tif")
-    #     self.dlg.outdirEdit.setText(filename)
-        
     def output_csv(self):
         filename, _filter = QFileDialog.getSaveFileName(
             self.dlg,"Select output file","","*.csv")
         self.dlg.outdirEdit.setText(filename)
         
+
+            
     def one(self):
         """Run method that performs all the real work"""
 
@@ -1206,6 +1192,63 @@ class RSDesigner:
             self.iface.messageBar().pushMessage("成功", "水力设计",
                                                 level=Qgis.Success, duration=3)                
 
+    def setProgress(self,value):
+        self.dlg3.pgbar.setValue(value)
+         
+    def setProgress2(self,value):
+        self.dlg3.pgbar2.setValue(value)        
+        
+    def simu(self,file,ts,idx):
+        self.dlg3.label_2.setText(ts)
+        sign = 'progress_update%s'%(idx)
+        sim =  Simulation(file)
+        for st in sim:
+            sim.step_advance(300)
+            perc = int(sim.percent_complete*100)
+            getattr(so,sign).emit(perc)         
+        sim.close()     
+        getattr(so,sign).emit(100)
+        self.simulation_finished[idx-1] = True
+        
+
+        
+    def valueChanged(self):
+        if self.simulation_finished[0]:
+            if self.dlg.checkBox.isChecked():
+                inp_file = self.dlg.lineEdit.text()
+                ts2 = self.dlg.comboBox_2.currentText()
+                kind2 = self.dlg.typeBox_2.currentText()
+                runoff_co2 = eval(self.dlg.coeEdit_2.text())
+                file2 = get_simulate_file(self.inp,inp_file,ts2,kind2,runoff_co2,self.rainfield[ts2])
+                self.files.append(file2)                
+                
+                self.worker = Thread(target=self.simu,args=(file2,ts2,2))
+                self.worker.start()
+            else:
+                self.dlg3.pushButton.setText('完成')
+                self.dlg3.label_2.setText('已完成模拟')
+           
+    def valueChanged2(self):
+        if set(self.simulation_finished) == {True}:
+            self.dlg3.pushButton.setText('完成')       
+            self.dlg3.label_2.setText('已完成模拟')
+            
+    def simu_changed(self):
+        self.dlg3.close()
+        if set(self.simulation_finished) == {True}:
+            ress = []
+            for file in self.files:
+                rpt_file = file.replace('.inp','.rpt')
+                res = eval_rpt(rpt_file,self.inp)
+                ress.append(res)
+            res = gpd.pd.concat(ress,axis=0)         
+            outcsvdir = self.dlg.outdirEdit.text()
+            res.to_csv(outcsvdir,encoding='gb2312')        
+            self.iface.messageBar().pushMessage("成功", "模拟评估降雨序列",
+                                                level=Qgis.Success, duration=3)
+        else:
+            self.worker.join(1)
+
             
             
     def Simulate(self):
@@ -1228,6 +1271,22 @@ class RSDesigner:
             
         self.dlg.comboBox.clear()
         self.dlg.comboBox_2.clear()
+        
+        self.dlg3 = RSProcessDialog()
+        self.dlg3.pgbar.setMinimum(0)
+        self.dlg3.pgbar.setMaximum(100)
+        self.dlg3.pgbar.setValue(0)
+        self.dlg3.pgbar2.setMinimum(0)
+        self.dlg3.pgbar2.setMaximum(100)
+        self.dlg3.pgbar2.setValue(0)        
+        self.dlg3.pgbar.valueChanged.connect(self.valueChanged)
+        self.dlg3.pgbar2.valueChanged.connect(self.valueChanged2)
+        self.dlg3.pgbar2.setEnabled(False)     
+        self.dlg3.pushButton.clicked.connect(self.simu_changed)
+        self.dlg3.pushButton.setText('取消')
+        
+        so.progress_update1.connect(self.setProgress)
+        so.progress_update2.connect(self.setProgress2)
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -1238,20 +1297,13 @@ class RSDesigner:
             ts = self.dlg.comboBox.currentText()
             kind = self.dlg.typeBox.currentText()
             runoff_co = eval(self.dlg.coeEdit.text())
-            file = os.path.splitext(inp_file)[0] + '_' + ts +'.inp'
-            res = simulate(self.inp,file,ts,kind,runoff_co,self.rainfield[ts])
-            
+
+            self.dlg3.show()            
+            file = get_simulate_file(self.inp,inp_file,ts,kind,runoff_co,self.rainfield[ts])
+            self.files = [file]
+            self.simulation_finished = [False]
             if self.dlg.checkBox.isChecked():
-                ts2 = self.dlg.comboBox_2.currentText()
-                kind2 = self.dlg.typeBox_2.currentText()
-                runoff_co2 = eval(self.dlg.coeEdit_2.text())
-                file = os.path.splitext(inp_file)[0] + '_' + ts2 +'.inp'
-                res2 = simulate(self.inp,file,ts2,kind2,runoff_co2,self.rainfield[ts2])
-            else:
-                ts2 = ''
-            res = gpd.pd.concat([res,res2],axis=0)
-            
-            outcsvdir = self.dlg.outdirEdit.text()
-            res.to_csv(outcsvdir,encoding='gb2312')
-            self.iface.messageBar().pushMessage("成功", "模拟评估降雨序列 {0} {1}".format(ts,ts2),
-                                                level=Qgis.Success, duration=3)  
+                self.dlg3.pgbar2.setEnabled(True)
+                self.simulation_finished.append(False)
+            self.worker = Thread(target=self.simu,args=(file,ts,1))
+            self.worker.start()   
