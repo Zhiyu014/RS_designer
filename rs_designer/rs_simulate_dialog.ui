@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>394</width>
+    <width>450</width>
     <height>388</height>
    </rect>
   </property>
@@ -14,40 +14,20 @@
    <string>模型模拟评估</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="6" column="2">
-    <widget class="QToolButton" name="rainButton_2">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>...</string>
+      <string>SWMM模型文件</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="coeEdit">
-     <property name="text">
-      <string>0.9</string>
-     </property>
-    </widget>
+   <item row="0" column="1" colspan="4">
+    <widget class="QLineEdit" name="lineEdit"/>
    </item>
-   <item row="9" column="1">
-    <widget class="QLineEdit" name="outdirEdit"/>
-   </item>
-   <item row="0" column="2">
+   <item row="0" column="5">
     <widget class="QToolButton" name="inputButton">
      <property name="text">
       <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>模拟评估结果输出</string>
      </property>
     </widget>
    </item>
@@ -58,23 +38,16 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="1" colspan="4">
     <widget class="QComboBox" name="comboBox"/>
    </item>
-   <item row="10" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QComboBox" name="comboBox_2">
+   <item row="1" column="5">
+    <widget class="QToolButton" name="rainButton">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>...</string>
      </property>
     </widget>
    </item>
@@ -85,61 +58,8 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QToolButton" name="rainButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>综合径流系数</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="2">
-    <widget class="QToolButton" name="outputButton">
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_8">
-     <property name="text">
-      <string>降雨数据类型</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
+   <item row="2" column="1" colspan="2">
     <widget class="QComboBox" name="typeBox">
-     <item>
-      <property name="text">
-       <string>INTENSITY</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>VOLUME</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>CUMULATIVE</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QComboBox" name="typeBox_2">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <item>
       <property name="text">
        <string>INTENSITY</string>
@@ -164,21 +84,95 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="coeEdit">
      <property name="text">
-      <string>SWMM模型文件</string>
+      <string>0.9</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="3" column="2" colspan="2">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>模拟时长(H:M)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="4">
+    <widget class="QLineEdit" name="duraEdit">
+     <property name="text">
+      <string>26:00</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="2">
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>使用两组降雨数据</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>降雨数据2</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
+   <item row="5" column="1" colspan="4">
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QToolButton" name="rainButton_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>降雨数据类型</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2">
+    <widget class="QComboBox" name="typeBox_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <item>
+      <property name="text">
+       <string>INTENSITY</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>VOLUME</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>CUMULATIVE</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>综合径流系数</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
     <widget class="QLineEdit" name="coeEdit_2">
      <property name="enabled">
       <bool>false</bool>
@@ -188,10 +182,47 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
-    <widget class="QCheckBox" name="checkBox">
+   <item row="7" column="2" colspan="2">
+    <widget class="QLabel" name="label_10">
      <property name="text">
-      <string>使用两组降雨数据</string>
+      <string>模拟时长(H:M)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="4">
+    <widget class="QLineEdit" name="duraEdit_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>04:00</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>模拟评估结果输出</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" colspan="4">
+    <widget class="QLineEdit" name="outdirEdit"/>
+   </item>
+   <item row="8" column="5">
+    <widget class="QToolButton" name="outputButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>

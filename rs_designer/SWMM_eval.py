@@ -12,8 +12,7 @@ from numpy import nan
 import os.path
 # from pyswmm import Simulation
 
-def eval_pipes(pipe_file,diam):
-    pipes = gpd.read_file(pipe_file)
+def eval_quanti(pipes,diam):
     pipes['length'] = pipes.length
     quanti = pipes.groupby(diam)['length'].sum()
     quanti = gpd.pd.DataFrame(quanti).reset_index()
@@ -23,7 +22,7 @@ def get_inp(inp_file):
     inp = read_inp_file(inp_file)
     return inp
 
-def get_simulate_file(inp,inp_file,rain_ts,kind,runoff_co,field):
+def get_simulate_file(inp,inp_file,rain_ts,kind,runoff_co,dura,field):
     inp['RAINGAGES']['RG'].Timeseries = rain_ts
     inp['RAINGAGES']['RG'].Format = kind
     
@@ -31,7 +30,8 @@ def get_simulate_file(inp,inp_file,rain_ts,kind,runoff_co,field):
     
     st = (inp['OPTIONS']['START_DATE'],inp['OPTIONS']['START_TIME'])
     st_time = datetime(st[0].year,st[0].month,st[0].day,st[1].hour,st[1].minute)
-    end_time = st_time + timedelta(minutes = field['duration'] + 120)   # Extra 2-hour simulation
+    duration = int(dura.split(':')[0])*60 + int(dura.split(':')[1])
+    end_time = st_time + timedelta(minutes = duration)   # Extra 2-hour simulation
     inp['OPTIONS']['END_DATE'] = end_time.date()
     inp['OPTIONS']['END_TIME'] = end_time.time()
     
@@ -65,16 +65,17 @@ def eval_rpt(rpt_file,inp):
     if nf is not None:
         flood_perc = round(len(nf)/len(inp['JUNCTIONS'])*100,2)
         flood_high_perc = round(len(nf[nf['Maximum_Ponded_Depth_Meters']>0.15])/len(inp['JUNCTIONS'])*100,2)
-        
+        flood_highest = round(nf['Maximum_Ponded_Depth_Meters'].max(),2)
         flood_dura_avg = round(nf['Hours_Flooded'].mean(),2)
         flood_dura_max = round(nf['Hours_Flooded'].max(),2)
     else:
-        flood_perc,flood_high_perc,flood_dura_avg,flood_dura_max = 0,0,'-','-'
+        flood_perc,flood_high_perc,flood_highest,flood_dura_avg,flood_dura_max = 0,0,0,'-','-'
     
     res = gpd.pd.DataFrame(columns=['满载管道长度占比/%','内涝节点占比/%',
-                                    '积水深度超过15 cm节点占比/%','平均积水时间/hr',
+                                    '积水深度超过15 cm节点占比/%','最大积水深度/m',
+                                    '平均积水时间/hr',
                                     '最大积水时间/hr'])
     ts = os.path.split(rpt_file)[-1].split('_')[-1].split('.')[0]
-    res.loc[ts]=[full_length_perc,flood_perc,flood_high_perc,
+    res.loc[ts]=[full_length_perc,flood_perc,flood_high_perc,flood_highest,
                       flood_dura_avg,flood_dura_max]
     return res

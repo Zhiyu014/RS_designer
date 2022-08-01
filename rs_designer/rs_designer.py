@@ -53,6 +53,7 @@ from .rs_rain_dialog import RSRainDialog
 from .rs_process_dialog import RSProcessDialog
 
 import os.path
+from os import getcwd,chdir
 import geopandas as gpd
 from pyswmm import Simulation
 from threading import Thread
@@ -60,8 +61,8 @@ from threading import Thread
 from .RS_toolkit import read_resample,create_subcatch,update_area,create_out,DEMGenerate,\
     formulate,break_pipes,break_cycle,export_net,configurate,update_graph,merge_outfall_area,\
     get_elevation,export_hydraulic_table,check_field,read_pipes,find_node
-from .SWMM_writer2 import create_model,Chicago_Hyetographs,insert_rainfall
-from .SWMM_eval import get_simulate_file,get_inp,eval_rpt
+from .SWMM_writer2 import create_model,Chicago_icm,insert_rainfall
+from .SWMM_eval import get_simulate_file,get_inp,eval_rpt,eval_quanti
 
 
 class SignalStore(QObject):
@@ -629,7 +630,7 @@ class RSDesigner:
         para = [eval(pa) for pa in paras if ':' not in pa]
         para += [int(pa.split(':')[0])*60+int(pa.split(':')[1])
                 for pa in paras if ':' in pa]
-        ts = Chicago_Hyetographs(para)
+        ts = Chicago_icm(para)
         self.dlg2.tableWidget.clearContents()
         for idx,(time,data) in enumerate(ts):
             self.dlg2.tableWidget.setItem(idx,0,QTableWidgetItem(str(time)))
@@ -860,6 +861,8 @@ class RSDesigner:
             nodes,pipes = export_net(DX)
             table = export_hydraulic_table(DX)
             table.to_excel(os.path.join(outdir,'水力计算表.xlsx'),encoding='gbk')
+            quanti = eval_quanti(pipes,'diameter')
+            quanti.to_excel(os.path.join(outdir,'工程量统计.xlsx'),encoding='gbk')
             
             create_model(nodes,pipes,Polygons,os.path.join(outdir,'model.inp')) 
             
@@ -1142,9 +1145,11 @@ class RSDesigner:
             DX = update_graph(X,config)
                 
             nodes,pipes = export_net(DX)
+            
             table = export_hydraulic_table(DX)
             table.to_excel(os.path.join(outdir,'水力计算表.xlsx'),encoding='gbk')
-            
+            quanti = eval_quanti(pipes,'diameter')
+            quanti.to_excel(os.path.join(outdir,'工程量统计.xlsx'),encoding='gbk')
 
             create_model(nodes,pipes,subcatch,os.path.join(outdir,'model.inp'))
             
@@ -1201,7 +1206,11 @@ class RSDesigner:
     def simu(self,file,ts,idx):
         self.dlg3.label_2.setText(ts)
         sign = 'progress_update%s'%(idx)
+        ori_path = getcwd()
+        inp_path,file = os.path.split(file)
+        chdir(inp_path)
         sim =  Simulation(file)
+        chdir(ori_path)
         for st in sim:
             sim.step_advance(300)
             perc = int(sim.percent_complete*100)
@@ -1219,7 +1228,9 @@ class RSDesigner:
                 ts2 = self.dlg.comboBox_2.currentText()
                 kind2 = self.dlg.typeBox_2.currentText()
                 runoff_co2 = eval(self.dlg.coeEdit_2.text())
-                file2 = get_simulate_file(self.inp,inp_file,ts2,kind2,runoff_co2,self.rainfield[ts2])
+                dura = self.dlg.duraEdit_2.text()
+                file2 = get_simulate_file(self.inp,inp_file,ts2,kind2,runoff_co2,dura,
+                                          self.rainfield[ts2])
                 self.files.append(file2)                
                 
                 self.worker = Thread(target=self.simu,args=(file2,ts2,2))
@@ -1297,9 +1308,11 @@ class RSDesigner:
             ts = self.dlg.comboBox.currentText()
             kind = self.dlg.typeBox.currentText()
             runoff_co = eval(self.dlg.coeEdit.text())
+            dura = self.dlg.duraEdit.text()
 
             self.dlg3.show()            
-            file = get_simulate_file(self.inp,inp_file,ts,kind,runoff_co,self.rainfield[ts])
+            file = get_simulate_file(self.inp,inp_file,ts,kind,runoff_co,dura,
+                                     self.rainfield[ts])
             self.files = [file]
             self.simulation_finished = [False]
             if self.dlg.checkBox.isChecked():

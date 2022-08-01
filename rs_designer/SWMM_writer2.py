@@ -13,12 +13,14 @@ import geopandas as gpd
 from shapely.geometry import MultiPoint
 from math import log10
 from os.path import join,split,dirname
+from numpy import diff,array
 
+# This hyetograph is correct in a continous function, but incorrect with 5-min block.
 def Chicago_Hyetographs(para_tuple):
     A,C,n,b,r,P,delta,dura = para_tuple
     a = A*(1+C*log10(P))
     ts = []
-    for i in range(dura//delta+1):
+    for i in range(dura//delta):
         t = i*delta
         key = str(t//60).zfill(2)+':'+str(t % 60).zfill(2)
         if t <= r*dura:
@@ -26,6 +28,27 @@ def Chicago_Hyetographs(para_tuple):
         else:
             ts.append([key, (a*((1-n)*(t-r*dura)/(1-r)+b)/((t-r*dura)/(1-r)+b)**(1+n))*60])
     # tsd = TimeseriesData(Name = name,data = ts)
+    return ts
+
+# Generate a rainfall intensity file from a cumulative values in ICM
+def Chicago_icm(para_tuple):
+    A,C,n,b,r,P,delta,dura = para_tuple
+    a = A*(1+C*log10(P))
+    HT = a*dura/(dura+b)**n
+    Hs = []
+    for i in range(dura//delta+1):
+        t = i*delta
+        if t <= r*dura:
+            H = HT*(r-(r-t/dura)*(1-t/(r*(dura+b)))**(-n))
+        else:
+            H = HT*(r+(t/dura-r)*(1+(t-dura)/((1-r)*(dura+b)))**(-n))
+        Hs.append(H)
+    tsd = diff(array(Hs))*12
+    ts = []
+    for i in range(dura//delta):
+        t = i*delta
+        key = str(t//60).zfill(2)+':'+str(t % 60).zfill(2)
+        ts.append([key,tsd[i]])
     return ts
 
 def insert_rainfall(inp,name,tss,level):
