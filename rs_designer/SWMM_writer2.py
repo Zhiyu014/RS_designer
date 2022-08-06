@@ -8,12 +8,13 @@ from swmm_api.input_file import  SwmmInput, section_labels as sections
 from swmm_api.input_file.sections import *
 from swmm_api.input_file.sections.others import TimeseriesData
 
+import math
 import json
 import geopandas as gpd
 from shapely.geometry import MultiPoint
 from math import log10
 from os.path import join,split,dirname
-from numpy import diff,array
+from numpy import diff,array,mean
 
 # This hyetograph is correct in a continous function, but incorrect with 5-min block.
 def Chicago_Hyetographs(para_tuple):
@@ -94,21 +95,40 @@ def create_inp(poly,nodes,pipes):
 
     inp[sections.SUBCATCHMENTS] = SubCatchment.create_section()
     sub = poly.copy()
-    sub['Name'],sub['RainGage'],sub['Outlet'],sub['Area'],sub['Imperv'] = sub['id'],'RG',sub['node'],sub['geometry'].area/1e4,90
-    sub['Width'] = sub['area'] / sub.apply(lambda row:max([nodes.loc[row['node'],'geometry'].distance(po) for po in MultiPoint(row['geometry'].convex_hull.boundary.coords)]),axis=1)
-    sub['Slope'],sub['CurbLen'] = 0.5,0.0
-    sub2 = sub.set_index('Name',drop = False).drop([co for co in sub.columns if co not in ['Name','RainGage','Outlet','Area','Imperv','Width','Slope','CurbLen']],axis=1)
+    sub['Name'],sub['RainGage'],sub['Outlet'],sub['Area'],sub['Imperv'] = \
+        sub['id'],'RG',sub['node'],sub['geometry'].area/1e4,90
+    # sub['Width'] = sub['area'] / sub.apply(lambda row:max([nodes.loc[row['node'],'geometry'].distance(po) for po in MultiPoint(row['geometry'].convex_hull.boundary.coords)]),axis=1)
+    sub['Width'] = math.sqrt(sub['Area']*1e4/math.pi)
+    
+    conds = pipes.copy().set_index('us_node')
+    sub['Slope'] = sub['Outlet'].apply(lambda node:\
+                                       mean((conds.loc[node,'us_grdele'] -\
+                                             conds.loc[node,'ds_grdele'])/conds.loc[node,'length']*100))
+    sub['CurbLen'] = 0.0
+    sub2 = sub.set_index('Name',drop = False)
+    sub2 = sub2.drop([co for co in sub.columns if co not in 
+                      ['Name','RainGage','Outlet','Area','Imperv','Width','Slope','CurbLen']],axis=1)
     subdic = sub2.to_dict('index')
     for k,v in subdic.items():
         inp[sections.SUBCATCHMENTS].add_obj(SubCatchment(**v))
         
     inp[sections.SUBAREAS] = SubArea.create_section()
-    subareadic = {name:{'Subcatch':name,'N_Imperv':0.01,'N_Perv':0.1,'S_Imperv':0.0,'S_Perv':0.0,'PctZero':100} for name in sub['Name']}
+    subareadic = {name:{'Subcatch':name,
+                        'N_Imperv':0.015,
+                        'N_Perv':0.2,
+                        'S_Imperv':0.0,
+                        'S_Perv':0.0,
+                        'PctZero':100} for name in sub['Name']}
     for k,v in subareadic.items():
         inp[sections.SUBAREAS].add_obj(SubArea(**v))
     
     inp[sections.INFILTRATION] = Infiltration.create_section()
-    infildic = {name:{'Subcatch':name,'MaxRate':10000,'MinRate':10000,'Decay':4.0,'DryTime':7.0,'MaxInf':0.0} for name in sub['Name']}
+    infildic = {name:{'Subcatch':name,
+                      'MaxRate':10000,
+                      'MinRate':10000,
+                      'Decay':4.0,
+                      'DryTime':7.0,
+                      'MaxInf':0.0} for name in sub['Name']}
     for k,v in infildic.items():
         inp[sections.INFILTRATION].add_obj(InfiltrationHorton(**v))
     
@@ -116,9 +136,12 @@ def create_inp(poly,nodes,pipes):
     node = nodes[nodes['node_type']=='node'].copy()
     node['Name'] = node['name']
     node['Elevation'] = node['invelev']
-    node['MaxDepth'] = node['ctrlelev'].astype('float') - node['invelev'].astype('float')  if 'ctrlelev' in node.columns else node['elev'].astype('float') - node['invelev'].astype('float')
+    node['MaxDepth'] = node['ctrlelev'].astype('float') - node['invelev'].astype('float')\
+        if 'ctrlelev' in node.columns else \
+            node['elev'].astype('float') - node['invelev'].astype('float')
     node['InitDepth'], node['SurDepth'], node['Aponded'] = 0,0,500
-    juncdict = node.drop([co for co in node.columns if co not in ['Name' ,'Elevation' , 'MaxDepth'  , 'InitDepth' , 'SurDepth',   'Aponded']],axis=1).to_dict('index')
+    juncdict = node.drop([co for co in node.columns if co not in 
+                          ['Name','Elevation','MaxDepth','InitDepth','SurDepth','Aponded']],axis=1).to_dict('index')
     for k,v in juncdict.items():
         inp[sections.JUNCTIONS].add_obj(Junction(**v))
         
@@ -129,7 +152,9 @@ def create_inp(poly,nodes,pipes):
     # outfall['Type'],outfall['Data'],outfall['FlapGate'] = 'TIDAL', split(pttn_file)[-1].split('.')[0], True
     # outfall['Type'],outfall['Data'],outfall['FlapGate'] = 'FIXED', 3.75, True
     outfall['Type'] = 'FREE'
-    outfalldict = outfall.drop([co for co in outfall.columns if co not in ['Name' , 'Elevation' , 'Type',   'Data'  ,  'FlapGate']],axis=1).to_dict('index')
+    outfalldict = outfall.drop([co for co in outfall.columns 
+                                if co not in ['Name','Elevation','Type','Data','FlapGate']],
+                               axis=1).to_dict('index')
     for k,v in outfalldict.items():
         inp[sections.OUTFALLS].add_obj(Outfall(**v))
     
@@ -139,18 +164,25 @@ def create_inp(poly,nodes,pipes):
     conds['Name'] = conds['us_node'].astype(str) +'-'+ conds['ds_node'].astype(str)
     conds['FromNode'],conds['ToNode'] = conds['us_node'],conds['ds_node']
     conds['Length'],conds['Roughness'] = conds['length'],0.022
-    conds['InOffset'] = conds.apply(lambda row:row['us_depth']-nodes.loc[row['us_node'],'invelev'],axis=1)
+    conds['InOffset'] = conds.apply(lambda row:row['us_depth']-\
+                                    nodes.loc[row['us_node'],'invelev'],axis=1)
     conds['InitFlow'],conds['MaxFlow'] = 0.0,0
-    conds['OutOffset'] = conds.apply(lambda row:row['ds_depth']-nodes.loc[row['ds_node'],'invelev'],axis=1)
-    condict = conds.drop([co for co in conds.columns if co not in ['Name' ,   'FromNode' ,  'ToNode'   ,  'Length'  ,   'Roughness',  'InOffset' ,  'OutOffset' , 'InitFlow' ,  'MaxFlow']],axis=1).to_dict('index')
+    conds['OutOffset'] = conds.apply(lambda row:row['ds_depth']-\
+                                     nodes.loc[row['ds_node'],'invelev'],axis=1)
+    condict = conds.drop([co for co in conds.columns
+                          if co not in
+                          ['Name','FromNode','ToNode','Length','Roughness','InOffset','OutOffset','InitFlow','MaxFlow']],
+                         axis=1).to_dict('index')
     for k,v in condict.items():
         inp[sections.CONDUITS].add_obj(Conduit(**v))
         
     
     inp[sections.XSECTIONS] = CrossSection.create_section()
     xsec = pipes.copy()
-    xsec['Link'],xsec['Shape'],xsec['Geom1'] = xsec['us_node'].astype(str) + '-' + xsec['ds_node'].astype(str),'CIRCULAR',xsec['diameter']/1000
-    xsecdict = xsec.drop([co for co in xsec.columns if co not in ['Link','Shape','Geom1']],axis=1).to_dict('index')
+    xsec['Link'],xsec['Shape'],xsec['Geom1'] = \
+        xsec['us_node'].astype(str) + '-' + xsec['ds_node'].astype(str),'CIRCULAR',xsec['diameter']/1000
+    xsecdict = xsec.drop([co for co in xsec.columns 
+                          if co not in ['Link','Shape','Geom1']],axis=1).to_dict('index')
     for k,v in xsecdict.items():
         inp[sections.XSECTIONS].add_obj(CrossSection(**v))
     
@@ -180,12 +212,14 @@ def create_inp(poly,nodes,pipes):
     
     
     inp[sections.MAP] = MapSection()
-    bounds = (sub.bounds['minx'].min(),sub.bounds['miny'].min(),sub.bounds['maxx'].max(),sub.bounds['maxy'].max())
+    bounds = (sub.bounds['minx'].min(),sub.bounds['miny'].min(),
+              sub.bounds['maxx'].max(),sub.bounds['maxy'].max())
     inp[sections.MAP] = {'DIMENSIONS':list(bounds),'UNITS':'Meters'}
     
     inp[sections.COORDINATES] = Coordinate.create_section()
     coord = gpd.GeoDataFrame()
-    coord['Node'],coord['x'],coord['y'] = nodes['name'],nodes['geometry'].x,nodes['geometry'].y
+    coord['Node'],coord['x'],coord['y'] = \
+        nodes['name'],nodes['geometry'].x,nodes['geometry'].y
     coordict = coord.to_dict('index')
     for k,v in coordict.items():
         inp[sections.COORDINATES].add_obj(Coordinate(**v))
@@ -195,7 +229,9 @@ def create_inp(poly,nodes,pipes):
     polygons = gpd.GeoDataFrame(geometry = sub.boundary)
     polygons['Subcatch'] = sub['id']
     polygons = polygons.explode().reset_index(drop=True,level=None)
-    polygons['polygon'] = polygons['geometry'].apply(lambda poly: [list(node[:2]) for node in poly.coords])
+    polygons['polygon'] = polygons['geometry'].apply(lambda poly: 
+                                                     [list(node[:2]) 
+                                                      for node in poly.coords])
     polydict = polygons.drop('geometry',axis=1).to_dict('index')
     for k,v in polydict.items():
         inp[sections.POLYGONS].add_obj(Polygon(**v))

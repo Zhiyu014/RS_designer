@@ -1210,12 +1210,12 @@ class RSDesigner:
         inp_path,file = os.path.split(file)
         chdir(inp_path)
         sim =  Simulation(file)
-        chdir(ori_path)
         for st in sim:
             sim.step_advance(300)
             perc = int(sim.percent_complete*100)
             getattr(so,sign).emit(perc)         
-        sim.close()     
+        sim.close() 
+        chdir(ori_path)
         getattr(so,sign).emit(100)
         self.simulation_finished[idx-1] = True
         

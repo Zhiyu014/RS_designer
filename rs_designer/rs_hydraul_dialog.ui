@@ -211,6 +211,19 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>checkBox</tabstop>
+  <tabstop>inputButton6_2</tabstop>
+  <tabstop>comboline</tabstop>
+  <tabstop>inputButton2</tabstop>
+  <tabstop>inputButton2_2</tabstop>
+  <tabstop>combonode</tabstop>
+  <tabstop>inputButton</tabstop>
+  <tabstop>inputButton_2</tabstop>
+  <tabstop>comboriver</tabstop>
+  <tabstop>inputButton6</tabstop>
+  <tabstop>comboregion</tabstop>
+  <tabstop>inputButton5</tabstop>
+  <tabstop>inputButton5_2</tabstop>
   <tabstop>configEdit</tabstop>
   <tabstop>inputButton3</tabstop>
   <tabstop>combodem</tabstop>

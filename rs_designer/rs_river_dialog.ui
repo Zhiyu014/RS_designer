@@ -61,6 +61,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>checkBox</tabstop>
+  <tabstop>disEdit</tabstop>
+  <tabstop>disEdit2</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

@@ -22,7 +22,49 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+# import os
+# import sys
+# f = open(os.devnull, 'w')
+# sys.stderr = f
 
+
+try:
+    import fiona
+    import geopandas
+    import openpyxl
+    import pyswmm
+    import swmm_api
+except:
+    # import pip
+    # pip.main(["install","./dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"])
+
+    
+    import os,sys
+    pythonpath = os.path.dirname(sys.executable)
+    HERE = os.path.dirname(__file__)
+    bat_dir = os.path.join(HERE,'install.bat')
+    # cmds = "cmd.exe /c " + pythonpath + "\n  pip install -r " +\
+    #     os.path.join(HERE,"requirements.txt") + " ; pause"
+    
+    cmds = '''cmd.exe /c {0} "{1}" "{2}"'''.format(bat_dir,pythonpath,HERE)
+    # with open(os.path.join(HERE,'requirements.txt')) as f:
+    #     requires = f.readlines()
+    # requires = [req.strip('\n') for req in requires]
+    
+    # cmds = [pythonpath + " -m pip install" for req in requires]
+    # cmds += ['pause']
+    from subprocess import Popen, PIPE, STDOUT
+    # p = subprocess.Popen(' && '.join(cmds))
+    p = Popen(cmds)
+    # p = Popen(cmds, stdout=PIPE,stderr=STDOUT)
+    
+    # curline = p.stdout.readline()
+    # while(curline != b''):
+    #     print(curline)
+    #     curline = p.stdout.readline()
+    
+    # t = os.system(' && '.join(cmds))
+    p.wait()
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
