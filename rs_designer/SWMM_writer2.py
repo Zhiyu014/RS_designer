@@ -98,7 +98,7 @@ def create_inp(poly,nodes,pipes):
     sub['Name'],sub['RainGage'],sub['Outlet'],sub['Area'],sub['Imperv'] = \
         sub['id'],'RG',sub['node'],sub['geometry'].area/1e4,90
     # sub['Width'] = sub['area'] / sub.apply(lambda row:max([nodes.loc[row['node'],'geometry'].distance(po) for po in MultiPoint(row['geometry'].convex_hull.boundary.coords)]),axis=1)
-    sub['Width'] = math.sqrt(sub['Area']*1e4/math.pi)
+    sub['Width'] = (sub['Area']*1e4/math.pi)**0.5
     
     conds = pipes.copy().set_index('us_node')
     sub['Slope'] = sub['Outlet'].apply(lambda node:\
