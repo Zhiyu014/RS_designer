@@ -102,8 +102,8 @@ def create_inp(poly,nodes,pipes):
     
     conds = pipes.copy().set_index('us_node')
     sub['Slope'] = sub['Outlet'].apply(lambda node:\
-                                       mean((conds.loc[node,'us_grdele'] -\
-                                             conds.loc[node,'ds_grdele'])/conds.loc[node,'length']*100))
+                                       max(mean((conds.loc[node,'us_grdele'] -\
+                                             conds.loc[node,'ds_grdele'])/conds.loc[node,'length']*100),0))
     sub['CurbLen'] = 0.0
     sub2 = sub.set_index('Name',drop = False)
     sub2 = sub2.drop([co for co in sub.columns if co not in 

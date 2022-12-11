@@ -733,6 +733,7 @@ class RSDesigner:
             self.dlg.comboBox_2.setEnabled(True)
             self.dlg.typeBox_2.setEnabled(True)
             self.dlg.coeEdit_2.setEnabled(True)
+            self.dlg.duraEdit_2.setEnabled(True)
             if self.dlg.rainButton.isEnabled():
                 self.dlg.rainButton_2.setEnabled(True)
         else:
@@ -740,6 +741,8 @@ class RSDesigner:
             self.dlg.typeBox_2.setEnabled(False)
             self.dlg.coeEdit_2.setEnabled(False)        
             self.dlg.rainButton_2.setEnabled(False)
+            self.dlg.duraEdit_2.setEnabled(False)
+
         
     def output_dir(self):
         filedir = QFileDialog.getExistingDirectory(
