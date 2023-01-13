@@ -17,8 +17,97 @@
    <string>水力设计计算</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="13" column="4">
+    <widget class="QToolButton" name="inputButton4_2">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>属性</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QComboBox" name="comboriver">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QToolButton" name="inputButton">
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>水力设计参数</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="4">
+    <widget class="QToolButton" name="inputButton5_2">
+     <property name="text">
+      <string>属性</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QComboBox" name="comboline"/>
+   </item>
    <item row="2" column="4">
     <widget class="QToolButton" name="inputButton_2">
+     <property name="text">
+      <string>属性</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>高程点/DEM</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>管道</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>河道</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2">
+    <widget class="QLineEdit" name="outdirEdit"/>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>子汇水区</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <widget class="QToolButton" name="inputButton2_2">
+     <property name="text">
+      <string>属性</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="4">
+    <widget class="QToolButton" name="inputButton3">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="text">
       <string>属性</string>
      </property>
@@ -34,51 +123,10 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QComboBox" name="combonode"/>
-   </item>
-   <item row="2" column="3">
-    <widget class="QToolButton" name="inputButton">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_6">
      <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QCheckBox" name="checkBox">
-     <property name="text">
-      <string>自动提取属性</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QToolButton" name="inputButton2">
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="4">
-    <widget class="QToolButton" name="inputButton5_2">
-     <property name="text">
-      <string>属性</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="2">
-    <widget class="QLineEdit" name="configEdit"/>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>河道</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="3">
-    <widget class="QToolButton" name="inputButton5">
-     <property name="text">
-      <string>...</string>
+      <string>节点</string>
      </property>
     </widget>
    </item>
@@ -89,46 +137,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QComboBox" name="comboline"/>
-   </item>
-   <item row="12" column="4">
-    <widget class="QToolButton" name="inputButton3">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>属性</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>管道</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QLabel" name="label_7">
-     <property name="text">
-      <string>水力设计参数</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="3">
-    <widget class="QToolButton" name="outputButton">
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="2">
-    <widget class="QLineEdit" name="outdirEdit"/>
-   </item>
-   <item row="6" column="2">
-    <widget class="QComboBox" name="comboregion"/>
-   </item>
    <item row="13" column="2">
     <widget class="QComboBox" name="combodem">
      <property name="editable">
@@ -136,17 +144,23 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="2">
-    <widget class="QComboBox" name="comboriver">
-     <property name="enabled">
-      <bool>false</bool>
+   <item row="6" column="2">
+    <widget class="QComboBox" name="comboregion"/>
+   </item>
+   <item row="12" column="2">
+    <widget class="QLineEdit" name="configEdit"/>
+   </item>
+   <item row="1" column="3">
+    <widget class="QToolButton" name="inputButton2">
+     <property name="text">
+      <string>...</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="0">
-    <widget class="QLabel" name="label_2">
+   <item row="14" column="3">
+    <widget class="QToolButton" name="outputButton">
      <property name="text">
-      <string>高程点/DEM</string>
+      <string>...</string>
      </property>
     </widget>
    </item>
@@ -160,13 +174,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
-    <widget class="QToolButton" name="inputButton2_2">
-     <property name="text">
-      <string>属性</string>
-     </property>
-    </widget>
-   </item>
    <item row="13" column="3">
     <widget class="QToolButton" name="inputButton4">
      <property name="text">
@@ -174,31 +181,24 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_10">
+   <item row="2" column="2">
+    <widget class="QComboBox" name="combonode"/>
+   </item>
+   <item row="6" column="3">
+    <widget class="QToolButton" name="inputButton5">
      <property name="text">
-      <string>子汇水区</string>
+      <string>...</string>
      </property>
     </widget>
    </item>
-   <item row="13" column="4">
-    <widget class="QToolButton" name="inputButton4_2">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
+   <item row="0" column="2">
+    <widget class="QCheckBox" name="checkBox">
      <property name="text">
-      <string>属性</string>
+      <string>自动提取属性</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>节点</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4">
+   <item row="5" column="4">
     <widget class="QToolButton" name="inputButton6_2">
      <property name="enabled">
       <bool>false</bool>
@@ -212,7 +212,6 @@
  </widget>
  <tabstops>
   <tabstop>checkBox</tabstop>
-  <tabstop>inputButton6_2</tabstop>
   <tabstop>comboline</tabstop>
   <tabstop>inputButton2</tabstop>
   <tabstop>inputButton2_2</tabstop>

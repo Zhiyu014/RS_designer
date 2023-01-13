@@ -28,6 +28,12 @@
 # sys.stderr = f
 
 
+
+import os,sys
+pythonpath = os.path.dirname(sys.executable)
+HERE = os.path.dirname(__file__)
+bat_dir = os.path.join(HERE,'install.bat')
+
 try:
     import fiona
     import geopandas
@@ -39,10 +45,6 @@ except:
     # pip.main(["install","./dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"])
 
     
-    import os,sys
-    pythonpath = os.path.dirname(sys.executable)
-    HERE = os.path.dirname(__file__)
-    bat_dir = os.path.join(HERE,'install.bat')
     # cmds = "cmd.exe /c " + pythonpath + "\n  pip install -r " +\
     #     os.path.join(HERE,"requirements.txt") + " ; pause"
     
@@ -65,6 +67,16 @@ except:
     
     # t = os.system(' && '.join(cmds))
     p.wait()
+
+# if not os.path.exists(os.path.join(HERE,'register.lic')):
+#     with open(os.path.join(HERE,'register.lic'), 'w') as f:
+#         lines = [
+#             'PYTHONPATH '+pythonpath+'\n',
+#             'PLUGINPATH '+HERE+'\n',
+#             'LICCODE '
+#         ]
+#         f.writelines(lines)
+
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name

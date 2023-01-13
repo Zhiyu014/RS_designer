@@ -6,50 +6,50 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>308</height>
+    <width>512</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>水力设计参数设置</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="4">
+   <item row="0" column="0" colspan="3">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>地面集水时间</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
+   <item row="0" column="3">
     <widget class="QLineEdit" name="lineEdit_1">
      <property name="text">
       <string>10</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="5">
+   <item row="0" column="4">
     <widget class="QLabel" name="label_12">
      <property name="text">
       <string>流量管径对应关系</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="4">
+   <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>设计重现期P</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="4">
+   <item row="1" column="3">
     <widget class="QLineEdit" name="lineEdit_2">
      <property name="text">
       <string>5</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="5" rowspan="8">
+   <item row="1" column="4" rowspan="9">
     <widget class="QTableWidget" name="tableWidget">
      <property name="autoFillBackground">
       <bool>false</bool>
@@ -269,14 +269,14 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="0" colspan="4">
+   <item row="2" column="0" colspan="3">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>暴雨强度公式</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="4">
+   <item row="2" column="3">
     <widget class="QLabel" name="StormLabel">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;q=A(1+clgP)/(t+b)&lt;/span&gt;&lt;span style=&quot; font-size:12pt; vertical-align:super;&quot;&gt;n&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -290,21 +290,21 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2">
+   <item row="3" column="1">
     <widget class="QLineEdit" name="lineEdit_3">
      <property name="text">
       <string>1600</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="3">
+   <item row="3" column="2">
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>c</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="4">
+   <item row="3" column="3">
     <widget class="QLineEdit" name="lineEdit_4">
      <property name="text">
       <string>0.846</string>
@@ -318,84 +318,98 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
+   <item row="4" column="1">
     <widget class="QLineEdit" name="lineEdit_5">
      <property name="text">
       <string>7</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
+   <item row="4" column="2">
     <widget class="QLabel" name="label_7">
      <property name="text">
       <string>n</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
+   <item row="4" column="3">
     <widget class="QLineEdit" name="lineEdit_6">
      <property name="text">
       <string>0.656</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4">
+   <item row="5" column="0" colspan="3">
     <widget class="QLabel" name="label_8">
      <property name="text">
       <string>设计径流系数</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="4">
+   <item row="5" column="3">
     <widget class="QLineEdit" name="lineEdit_7">
      <property name="text">
       <string>0.61</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="4">
+   <item row="6" column="0" colspan="2">
     <widget class="QLabel" name="label_9">
      <property name="text">
       <string>管道粗糙度</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="4">
+   <item row="6" column="3">
     <widget class="QLineEdit" name="lineEdit_8">
      <property name="text">
       <string>0.014</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="4">
+   <item row="7" column="0" colspan="3">
     <widget class="QLabel" name="label_10">
      <property name="text">
       <string>起始覆土深度</string>
      </property>
     </widget>
    </item>
-   <item row="7" column="4">
+   <item row="7" column="3">
     <widget class="QLineEdit" name="lineEdit_9">
      <property name="text">
       <string>0.7</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="4">
+   <item row="8" column="0" colspan="3">
     <widget class="QLabel" name="label_11">
      <property name="text">
       <string>河道设计水位</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="4">
+   <item row="8" column="3">
     <widget class="QLineEdit" name="lineEdit_10">
      <property name="text">
       <string>3.75</string>
      </property>
     </widget>
    </item>
-   <item row="9" column="2" colspan="4">
+   <item row="9" column="0" colspan="3">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>管道最小坡度</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3">
+    <widget class="QLineEdit" name="lineEdit_11">
+     <property name="text">
+      <string>0.0005</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

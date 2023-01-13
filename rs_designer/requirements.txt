@@ -1,5 +1,7 @@
 ./dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl
+./dependencies/Rtree-1.0.1-cp39-cp39-win_amd64.whl
 ./dependencies/geopandas-0.11.0-py3-none-any.whl
 ./dependencies/openpyxl-3.0.10-py2.py3-none-any.whl
 ./dependencies/pyswmm-0.6.2-py2.py3-none-any.whl
 ./dependencies/swmm_api-0.2.0.18.3-py3-none-any.whl
+./dependencies/WMI-1.5.1-py2.py3-none-any.whl

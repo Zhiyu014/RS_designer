@@ -9,4 +9,4 @@ set RS_ROOT=%~2
 echo %RS_ROOT%
 
 cd /d %~dp0
-pip install -r "%RS_ROOT%\requirements.txt"
+"%OSGEO4W_ROOT%\python3.exe" -m pip install -r "%RS_ROOT%\requirements.txt"

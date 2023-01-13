@@ -51,6 +51,7 @@ from .rs_river_dialog import RSRiverDialog
 from .rs_simulate_dialog import RSSimulateDialog
 from .rs_rain_dialog import RSRainDialog
 from .rs_process_dialog import RSProcessDialog
+from .rs_register_dialog import RSRegisterDialog
 
 import os.path
 from os import getcwd,chdir
@@ -63,7 +64,7 @@ from .RS_toolkit import read_resample,create_subcatch,update_area,create_out,DEM
     get_elevation,export_hydraulic_table,check_field,read_pipes,find_node
 from .SWMM_writer2 import create_model,Chicago_icm,insert_rainfall
 from .SWMM_eval import get_simulate_file,get_inp,eval_rpt,eval_quanti
-
+from .register import Register
 
 class SignalStore(QObject):
     progress_update1 = pyqtSignal(int)
@@ -347,7 +348,7 @@ class RSDesigner:
         result = self.dlg2.exec_()
         if result:
             cons = [getattr(self.dlg2,'lineEdit_%s'%i).text().strip()
-                    for i in range(1,11)]
+                    for i in range(1,12)]
             flow = [self.dlg2.tableWidget.item(i,0).text()
                     for i in range(self.dlg2.tableWidget.rowCount())
                     if self.dlg2.tableWidget.item(i,0) is not None]
@@ -357,7 +358,7 @@ class RSDesigner:
                     if self.dlg2.tableWidget.item(i,0) is not None]
             diam = ','.join([f.strip() for f in diam if f.strip()!= ''])
             cons += [flow,diam]
-            text = '''"t0={0}";"P={1}";"A={2}";"c={3}";"b={4}";"n={5}";"phi={6}";"n0={7}";"futu={8}";"outlevel={9}";"flow={10}";"diam={11}"'''.format(*cons)            
+            text = '''"t0={0}";"P={1}";"A={2}";"c={3}";"b={4}";"n={5}";"phi={6}";"n0={7}";"futu={8}";"outlevel={9}";"minslope={10}";"flow={11}";"diam={12}"'''.format(*cons)
             self.dlg.configEdit.setText(text)
             pass
         
@@ -685,7 +686,7 @@ class RSDesigner:
                  for i in range(self.dlg2.tableWidget.rowCount())]
         level = [[int(times[idx].split(':')[0])+int(times[idx].split(':')[1])/60,
                   eval(lev.text().strip())]
-                 for idx,lev in enumerate(level) if lev is not None]
+                 for idx,lev in enumerate(level) if lev is not None and lev.text() != ""]
         
         self.inp = insert_rainfall(self.inp, name, tss, level)
         is_tidal = True if level != [] else False
@@ -754,6 +755,29 @@ class RSDesigner:
             self.dlg,"Select output file","","*.csv")
         self.dlg.outdirEdit.setText(filename)
         
+    def check_license(self):
+        reg = Register()
+        if not reg.checkAuthored():
+            self.reg_dlg = RSRegisterDialog()
+            self.reg_dlg.pushButton.clicked.connect(
+                lambda: self.reg_dlg.lineEdit.setText(reg.get_mach_num())
+            )
+            self.reg_dlg.show()
+            result = self.reg_dlg.exec_()
+            if result:
+                key = self.reg_dlg.lineEdit_2.text()
+                if reg.regist(key):
+                    self.iface.messageBar().pushMessage("成功", "程序授权",
+                                                level=Qgis.Success, duration=3)
+                    return True
+                else:
+                    self.iface.messageBar().pushMessage("出错", "授权码错误",
+                                                level=Qgis.Critical, duration=3)
+                    return False
+            else:
+                return False
+        else:
+            return True
 
             
     def one(self):
@@ -794,7 +818,8 @@ class RSDesigner:
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if result and self.check_license():
+            # TODO
             pipe_file = self.dlg.comboline.currentText()\
                 if os.path.isfile(self.dlg.comboline.currentText()) else\
                     layers[self.dlg.comboline.currentIndex()].source()
@@ -876,12 +901,13 @@ class RSDesigner:
             else:
                 print("%s图层加载失败！"%'subsystem')    
 
-            riverpoly.to_file(os.path.join(outdir,'riverpoly.shp'))
-            vlayer = QgsVectorLayer(os.path.join(outdir,'riverpoly.shp'),'riverpoly',"ogr")
-            if vlayer.isValid():
-                QgsProject.instance().addMapLayer(vlayer)
-            else:
-                print("%s图层加载失败！"%'riverpoly')    
+            if has_river:
+                riverpoly.to_file(os.path.join(outdir,'riverpoly.shp'))
+                vlayer = QgsVectorLayer(os.path.join(outdir,'riverpoly.shp'),'riverpoly',"ogr")
+                if vlayer.isValid():
+                    QgsProject.instance().addMapLayer(vlayer)
+                else:
+                    print("%s图层加载失败！"%'riverpoly')    
                 
             Polygons.to_file(os.path.join(outdir,'subcatch.shp'))
             vlayer = QgsVectorLayer(os.path.join(outdir,'subcatch.shp'),'subcatch',"ogr")
@@ -945,7 +971,7 @@ class RSDesigner:
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if result and self.check_license():
             pipe_file = self.dlg.comboline.currentText()\
                 if os.path.isfile(self.dlg.comboline.currentText()) else\
                     layers[self.dlg.comboline.currentIndex()].source()
@@ -1002,12 +1028,13 @@ class RSDesigner:
             else:
                 print("%s图层加载失败！"%'subsystem')    
 
-            riverpoly.to_file(os.path.join(outdir,'riverpoly.shp'))
-            vlayer = QgsVectorLayer(os.path.join(outdir,'riverpoly.shp'),'riverpoly',"ogr")
-            if vlayer.isValid():
-                QgsProject.instance().addMapLayer(vlayer)
-            else:
-                print("%s图层加载失败！"%'riverpoly')    
+            if has_river:
+                riverpoly.to_file(os.path.join(outdir,'riverpoly.shp'))
+                vlayer = QgsVectorLayer(os.path.join(outdir,'riverpoly.shp'),'riverpoly',"ogr")
+                if vlayer.isValid():
+                    QgsProject.instance().addMapLayer(vlayer)
+                else:
+                    print("%s图层加载失败！"%'riverpoly')    
                 
             Polygons.to_file(os.path.join(outdir,'subcatch.shp'))
             vlayer = QgsVectorLayer(os.path.join(outdir,'subcatch.shp'),'subcatch',"ogr")
@@ -1087,7 +1114,7 @@ class RSDesigner:
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if result and self.check_license():
             pipe_file = self.dlg.comboline.currentText()\
                 if os.path.isfile(self.dlg.comboline.currentText()) else\
                     layers[self.dlg.comboline.currentIndex()].source()    
@@ -1306,7 +1333,7 @@ class RSDesigner:
         # Run the dialog event loop
         result = self.dlg.exec_()
         # See if OK was pressed
-        if result:
+        if result and self.check_license():
             inp_file = self.dlg.lineEdit.text()
             ts = self.dlg.comboBox.currentText()
             kind = self.dlg.typeBox.currentText()

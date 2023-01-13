@@ -803,7 +803,7 @@ def calc_subx(dx,nodestree,config):
                                     4*dx[u][v]['flow']/math.pi/math.pow(dx[u][v]['diameter']/1000,2))
                 dx[u][v].update(velocity = 
                                     4*dx[u][v]['flow']/math.pi/math.pow(dx[u][v]['diameter']/1000,2))
-                dx[u][v].update(I = math.pow(config['n0']*dx[u][v]['velocity'],2)/math.pow(dx[u][v]['diameter']/4000,4/3))                
+                dx[u][v].update(I = max(math.pow(config['n0']*dx[u][v]['velocity'],2)/math.pow(dx[u][v]['diameter']/4000,4/3),config['minslope']))                
         err = max(abs(array([dx[u][v]['err'] for u,v in dx.edges()])))
         
     # for values in edgestree.values():
