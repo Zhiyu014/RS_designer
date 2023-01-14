@@ -39,19 +39,19 @@ from qgis.core import Qgis,QgsProject,QgsVectorLayer
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from .rs_one_dialog import RSOneDialog
-from .rs_layout_dialog import RSLayoutDialog
-from .rs_hydraul_dialog import RSHydraulDialog
-from .rs_config_dialog import RSConfigDialog
-from .rs_dem_dialog import RSDemDialog
-from .rs_node_dialog import RSNodeDialog
-from .rs_line_dialog import RSLineDialog
-from .rs_subcatch_dialog import RSSubcatchDialog
-from .rs_river_dialog import RSRiverDialog
-from .rs_simulate_dialog import RSSimulateDialog
-from .rs_rain_dialog import RSRainDialog
-from .rs_process_dialog import RSProcessDialog
-from .rs_register_dialog import RSRegisterDialog
+from ui.rs_one_dialog import RSOneDialog
+from ui.rs_layout_dialog import RSLayoutDialog
+from ui.rs_hydraul_dialog import RSHydraulDialog
+from ui.rs_config_dialog import RSConfigDialog
+from ui.rs_dem_dialog import RSDemDialog
+from ui.rs_node_dialog import RSNodeDialog
+from ui.rs_line_dialog import RSLineDialog
+from ui.rs_subcatch_dialog import RSSubcatchDialog
+from ui.rs_river_dialog import RSRiverDialog
+from ui.rs_simulate_dialog import RSSimulateDialog
+from ui.rs_rain_dialog import RSRainDialog
+from ui.rs_process_dialog import RSProcessDialog
+from ui.rs_register_dialog import RSRegisterDialog
 
 import os.path
 from os import getcwd,chdir

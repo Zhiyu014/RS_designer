@@ -100,10 +100,11 @@ class Register:
                 return False
 
 
-if __name__ == '__main__':
-    reg = Register()
-    mac = reg.get_mach_num()
-    code = md5(mac.encode(encoding='UTF-8')).hexdigest()
-    with open(join(dirname(__file__),'register.lic'), 'w') as f:
-        f.write(code)
-        f.close()
+# if __name__ == '__main__':
+#     reg = Register()
+#     mac = reg.get_mach_num()
+#     code = md5(mac.encode(encoding='UTF-8')).hexdigest()
+#     with open(join(dirname(__file__),'register.lic'), 'w') as f:
+#         f.write(code)
+#         f.close()
+#     p = input()

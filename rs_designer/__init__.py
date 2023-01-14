@@ -30,16 +30,18 @@
 
 
 import os,sys
-pythonpath = os.path.dirname(sys.executable)
+pythonpath = os.path.join(os.path.dirname(sys.executable),'..','apps','Python39')
 HERE = os.path.dirname(__file__)
 bat_dir = os.path.join(HERE,'install.bat')
 
 try:
     import fiona
     import geopandas
+    import rtree
     import openpyxl
     import pyswmm
     import swmm_api
+    import wmi
 except:
     # import pip
     # pip.main(["install","./dependencies/Fiona-1.8.21-cp39-cp39-win_amd64.whl"])
@@ -48,7 +50,7 @@ except:
     # cmds = "cmd.exe /c " + pythonpath + "\n  pip install -r " +\
     #     os.path.join(HERE,"requirements.txt") + " ; pause"
     
-    cmds = '''cmd.exe /c {0} "{1}" "{2}"'''.format(bat_dir,pythonpath,HERE)
+    cmds = '''cmd.exe /c {0} "{1}" "{2}" "{3}'''.format(bat_dir,pythonpath,os.path.dirname(sys.executable),HERE)
     # with open(os.path.join(HERE,'requirements.txt')) as f:
     #     requires = f.readlines()
     # requires = [req.strip('\n') for req in requires]
