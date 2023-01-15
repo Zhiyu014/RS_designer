@@ -39,19 +39,19 @@ from qgis.core import Qgis,QgsProject,QgsVectorLayer
 # Initialize Qt resources from file resources.py
 from .resources import *
 # Import the code for the dialog
-from ui.rs_one_dialog import RSOneDialog
-from ui.rs_layout_dialog import RSLayoutDialog
-from ui.rs_hydraul_dialog import RSHydraulDialog
-from ui.rs_config_dialog import RSConfigDialog
-from ui.rs_dem_dialog import RSDemDialog
-from ui.rs_node_dialog import RSNodeDialog
-from ui.rs_line_dialog import RSLineDialog
-from ui.rs_subcatch_dialog import RSSubcatchDialog
-from ui.rs_river_dialog import RSRiverDialog
-from ui.rs_simulate_dialog import RSSimulateDialog
-from ui.rs_rain_dialog import RSRainDialog
-from ui.rs_process_dialog import RSProcessDialog
-from ui.rs_register_dialog import RSRegisterDialog
+from .ui.rs_one_dialog import RSOneDialog
+from .ui.rs_layout_dialog import RSLayoutDialog
+from .ui.rs_hydraul_dialog import RSHydraulDialog
+from .ui.rs_config_dialog import RSConfigDialog
+from .ui.rs_dem_dialog import RSDemDialog
+from .ui.rs_node_dialog import RSNodeDialog
+from .ui.rs_line_dialog import RSLineDialog
+from .ui.rs_subcatch_dialog import RSSubcatchDialog
+from .ui.rs_river_dialog import RSRiverDialog
+from .ui.rs_simulate_dialog import RSSimulateDialog
+from .ui.rs_rain_dialog import RSRainDialog
+from .ui.rs_process_dialog import RSProcessDialog
+from .ui.rs_register_dialog import RSRegisterDialog
 
 import os.path
 from os import getcwd,chdir
@@ -271,21 +271,21 @@ class RSDesigner:
         if self.dlg.checkBox.isChecked():
             self.dlg.combonode.setEnabled(False)
             self.dlg.inputButton.setEnabled(False)
-            self.dlg.inputButton_2.setEnabled(False)
-            self.dlg.inputButton2_2.setEnabled(False)
-            self.dlg.inputButton5_2.setEnabled(False)
+            # self.dlg.inputButton_2.setEnabled(False)
+            # self.dlg.inputButton2_2.setEnabled(False)
+            # self.dlg.inputButton5_2.setEnabled(False)
             self.dlg.comboriver.setEnabled(True)
             self.dlg.inputButton6.setEnabled(True)
-            self.dlg.inputButton6_2.setEnabled(True)
+            # self.dlg.inputButton6_2.setEnabled(True)
         else:
             self.dlg.combonode.setEnabled(True)
             self.dlg.inputButton.setEnabled(True)
-            self.dlg.inputButton_2.setEnabled(True)
-            self.dlg.inputButton2_2.setEnabled(True)
-            self.dlg.inputButton5_2.setEnabled(True)
+            # self.dlg.inputButton_2.setEnabled(True)
+            # self.dlg.inputButton2_2.setEnabled(True)
+            # self.dlg.inputButton5_2.setEnabled(True)
             self.dlg.comboriver.setEnabled(False)
             self.dlg.inputButton6.setEnabled(False)
-            self.dlg.inputButton6_2.setEnabled(False)            
+            # self.dlg.inputButton6_2.setEnabled(False)            
         
         
         
@@ -306,8 +306,10 @@ class RSDesigner:
             self.dlg.comboriver.setCurrentText(filename)
         
     def river_changed(self):
+        self.dlg.inputButton6_2.setEnabled(False)
         self.dlg7 = RSRiverDialog()
         if self.dlg.combodem.currentText() != None:
+            self.dlg.inputButton6_2.setEnabled(True)
             self.riverfield = [self.dlg7.checkBox.isChecked(),
                                eval(self.dlg7.disEdit.text().strip()),
                                eval(self.dlg7.disEdit2.text().strip())] 
@@ -377,6 +379,7 @@ class RSDesigner:
             self.dlg.combodem.setCurrentText(filename)  
 
     def dem_changed(self):
+        self.dlg.inputButton4_2.setEnabled(False)
         self.dlg3 = RSDemDialog()
         self.dlg3.comboBox.setEnabled(False)
         self.dlg3.comboBox2.setEnabled(False)
@@ -387,8 +390,9 @@ class RSDesigner:
         if self.dlg.combodem.currentText() != None:
             dem_file = self.dlg.combodem.currentText()\
                 if os.path.isfile(self.dlg.combodem.currentText()) else\
-                    self.layers[self.dlg.combodem.currentIndex()].source()   
+                    self.layers[self.dlg.combodem.currentIndex()].source()
             if dem_file.endswith('shp'):
+                self.dlg.inputButton4_2.setEnabled(True)
                 columns = list(gpd.read_file(dem_file).columns)
                 self.dlg3.comboBox3.setEnabled(True)
                 self.dlg3.comboBox3.addItems(columns)    
@@ -396,6 +400,7 @@ class RSDesigner:
                 if pot != set():
                     self.dlg3.comboBox3.setCurrentText(list(pot)[0])
             elif dem_file.endswith('csv'):
+                self.dlg.inputButton4_2.setEnabled(True)
                 columns = list(gpd.pd.read_csv(dem_file).columns)
                 self.dlg3.comboBox.setEnabled(True)
                 self.dlg3.comboBox2.setEnabled(True)
@@ -428,6 +433,7 @@ class RSDesigner:
             
 
     def node_changed(self):
+        self.dlg.inputButton_2.setEnabled(False)
         self.dlg4 = RSNodeDialog()
         self.dlg4.comboBox.setEnabled(False)
         self.dlg4.comboBox2.setEnabled(False)
@@ -440,6 +446,7 @@ class RSDesigner:
                 if os.path.isfile(self.dlg.combonode.currentText()) else\
                     self.layers[self.dlg.combonode.currentIndex()].source()   
             if node_file.endswith('shp'):
+                self.dlg.inputButton_2.setEnabled(True)
                 columns = list(gpd.read_file(node_file).columns)
                 self.dlg4.comboBox.setEnabled(True)
                 self.dlg4.comboBox2.setEnabled(True)
@@ -471,6 +478,7 @@ class RSDesigner:
                 pass        
                 
     def line_changed(self):
+        self.dlg.inputButton2_2.setEnabled(False)
         self.dlg5 = RSLineDialog()
         self.dlg5.comboBox.setEnabled(False)
         self.dlg5.comboBox2.setEnabled(False)
@@ -483,6 +491,7 @@ class RSDesigner:
                 if os.path.isfile(self.dlg.comboline.currentText()) else\
                     self.layers[self.dlg.comboline.currentIndex()].source()   
             if line_file.endswith('shp'):
+                self.dlg.inputButton2_2.setEnabled(True)
                 columns = list(gpd.read_file(line_file).columns)
                 columns.remove('geometry')
                 columns.append('geometry.length')
@@ -517,6 +526,7 @@ class RSDesigner:
             
 
     def region_changed(self):
+        self.dlg.inputButton5_2.setEnabled(False)
         self.dlg6 = RSSubcatchDialog()
         self.dlg6.comboBox.setEnabled(False)
         self.dlg6.comboBox2.setEnabled(False)
@@ -529,6 +539,7 @@ class RSDesigner:
                 if os.path.isfile(self.dlg.comboregion.currentText()) else\
                     self.layers[self.dlg.comboregion.currentIndex()].source()   
             if region_file.endswith('shp'):
+                self.dlg.inputButton5_2.setEnabled(True)
                 columns = list(gpd.read_file(region_file).columns)
                 columns.remove('geometry')
                 columns.append('geometry.area')
@@ -794,7 +805,7 @@ class RSDesigner:
         self.dlg.inputButton4.clicked.connect(self.select_region)
         self.dlg.fieldButton.clicked.connect(self.select_config)
         self.dlg.inputButton5.clicked.connect(self.select_dem)
-        self.dlg.inputButton5_2.clicked.connect(self.select_demfield)            
+        self.dlg.inputButton4_2.clicked.connect(self.select_demfield)            
         self.dlg.outputButton.clicked.connect(self.output_dir)   
         self.dlg.combodem.currentTextChanged.connect(self.dem_changed)
         

@@ -20,7 +20,7 @@
    <item row="13" column="4">
     <widget class="QToolButton" name="inputButton4_2">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="text">
       <string>属性</string>
@@ -50,6 +50,9 @@
    </item>
    <item row="6" column="4">
     <widget class="QToolButton" name="inputButton5_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>属性</string>
      </property>
@@ -60,6 +63,9 @@
    </item>
    <item row="2" column="4">
     <widget class="QToolButton" name="inputButton_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>属性</string>
      </property>
@@ -98,6 +104,9 @@
    </item>
    <item row="1" column="4">
     <widget class="QToolButton" name="inputButton2_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>属性</string>
      </property>
@@ -194,7 +203,7 @@
    <item row="0" column="2">
     <widget class="QCheckBox" name="checkBox">
      <property name="text">
-      <string>自动提取属性</string>
+      <string>采用手动梳理的平面布局</string>
      </property>
     </widget>
    </item>
