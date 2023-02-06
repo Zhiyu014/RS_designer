@@ -6,9 +6,9 @@
 name=Rainwater System Designer
 qgisMinimumVersion=3.0
 description=This plugin designs a rainwater drainage system.
-version=0.2.3
+version=0.2.4
 author=Zhiyu Zhang
-email=2032846@tongji.edu.cn
+email=jonathan-yu@tongji.edu.cn
 
 about=The plugin generates the rainwater drainage system for planning.
 
